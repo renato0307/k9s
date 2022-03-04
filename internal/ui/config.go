@@ -124,7 +124,16 @@ func BenchConfig(context string) string {
 func (c *Configurator) RefreshStyles(context string) {
 	c.BenchFile = BenchConfig(context)
 
-	clusterSkins := filepath.Join(config.K9sHome(), fmt.Sprintf("%s_skin.yml", context))
+	var clusterSkins string
+	skinPatterns := config.NewSkinPatterns()
+	if err := skinPatterns.Load(); err == nil {
+		clusterSkins = skinPatterns.Match(context)
+	}
+
+	if clusterSkins == "" {
+		clusterSkins = filepath.Join(config.K9sHome(), fmt.Sprintf("%s_skin.yml", context))
+	}
+
 	if c.Styles == nil {
 		c.Styles = config.NewStyles()
 	} else {
