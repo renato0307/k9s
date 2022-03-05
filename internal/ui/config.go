@@ -19,11 +19,12 @@ type synchronizer interface {
 
 // Configurator represents an application configuration.
 type Configurator struct {
-	Config     *config.Config
-	Styles     *config.Styles
-	CustomView *config.CustomView
-	BenchFile  string
-	skinFile   string
+	Config       *config.Config
+	Styles       *config.Styles
+	CustomView   *config.CustomView
+	SkinPatterns *config.SkinPatterns
+	BenchFile    string
+	skinFile     string
 }
 
 // HasSkin returns true if a skin file was located.
@@ -125,11 +126,16 @@ func (c *Configurator) RefreshStyles(context string) {
 	c.BenchFile = BenchConfig(context)
 
 	var clusterSkins string
-	skinPatterns := config.NewSkinPatterns()
-	if err := skinPatterns.Load(); err == nil {
-		clusterSkins = skinPatterns.Match(context)
+	if c.SkinPatterns == nil {
+		skinPatterns := config.NewSkinPatterns()
+		if err := skinPatterns.Load(); err == nil {
+			c.SkinPatterns = &skinPatterns
+		}
 	}
 
+	if c.SkinPatterns != nil {
+		clusterSkins = c.SkinPatterns.Match(context)
+	}
 	if clusterSkins == "" {
 		clusterSkins = filepath.Join(config.K9sHome(), fmt.Sprintf("%s_skin.yml", context))
 	}
