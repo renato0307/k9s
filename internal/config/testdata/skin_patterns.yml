@@ -1,0 +1,10 @@
+skinPatterns:
+  lab:
+    pattern: lab-.*
+    skin: stock
+  dev:
+    pattern: dev-.*
+    skin: gruvbox-dark
+  prod:
+    pattern: prod-.*
+    skin: red
