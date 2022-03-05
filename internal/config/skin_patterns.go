@@ -17,7 +17,7 @@ type SkinPatterns struct {
 	Patterns map[string]Pattern `yaml:"skinPatterns"`
 }
 
-// HotKey describes a K9s skin pattern.
+// Pattern describes a K9s skin pattern.
 type Pattern struct {
 	Pattern string `yaml:"pattern"`
 	Skin    string `yaml:"skin"`
