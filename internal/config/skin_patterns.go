@@ -21,6 +21,8 @@ type SkinPatterns struct {
 type Pattern struct {
 	Pattern string `yaml:"pattern"`
 	Skin    string `yaml:"skin"`
+
+	regexp *regexp.Regexp
 }
 
 // NewSkinPatterns returns a new plugin.
@@ -47,16 +49,18 @@ func (sp SkinPatterns) LoadSkinPatterns(path string) error {
 		return err
 	}
 	for k, v := range sps.Patterns {
+		v.regexp = regexp.MustCompile(v.Pattern)
 		sp.Patterns[k] = v
 	}
 
 	return nil
 }
 
+// Match finds a skin for a context using a regular expression.
+// It returns the first skin that matches the context name.
 func (sp SkinPatterns) Match(context string) string {
 	for _, v := range sp.Patterns {
-		regexExpression := regexp.MustCompile(v.Pattern)
-		result := regexExpression.FindString(context)
+		result := v.regexp.FindString(context)
 		if result != "" {
 			skinFile := fmt.Sprintf("%s.yml", v.Skin)
 			return filepath.Join(K9sHome(), skinFile)
